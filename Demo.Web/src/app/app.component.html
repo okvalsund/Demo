@@ -1,0 +1,33 @@
+﻿<h3>Personer</h3>
+<div>
+    <div class="form-actions">
+        <input class="form-control input-sm" [(ngModel)]="searchCriteria" type="text" min="0" placeholder="">
+        <button class="btn btn-primary" type="button" style="width:100px" (click)="search()">Search</button>
+        <ul>
+            <li *ngFor="let person of persons" (click)="onSelect(person)">
+                <span>{{person.id}} : {{person.firstName}} {{person.middleName}} {{person.lastName}} </span>
+            </li>
+        </ul>
+        <div *ngIf="selectedPerson">
+            <h2>Edit: {{selectedPerson.firstName}} {{selectedPerson.middleName}} {{selectedPerson.lastName}}</h2>
+            <div><label>id: </label>{{selectedPerson.id}}</div>
+            <div>
+                <label>First Name: </label>
+                <input [(ngModel)]="selectedPerson.firstName" placeholder="firstName" />
+            </div>
+            <div>
+                <label>First Name: </label>
+                <input [(ngModel)]="selectedPerson.middleName" placeholder="middleName" />
+            </div>
+            <div>
+                <label>First Name: </label>
+                <input [(ngModel)]="selectedPerson.lastName" placeholder="lastName" />
+            </div>
+            <button class="btn btn-primary" type="button" style="width:100px" (click)="update()">Update</button>
+            <div class="row">
+                <div class="col" style="display: block; height: 25px">
+                    <strong>{{updateMessage}}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
