@@ -1,4 +1,4 @@
-﻿namespace Demo.Repository.Entities
+﻿namespace Demo.Desktop.Model
 {
     public class User
     {

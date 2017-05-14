@@ -1,5 +1,5 @@
-﻿using Demo.Desktop.Model;
-using Demo.Repository.Entities;
+﻿using Demo.Desktop.DAL;
+using Demo.Desktop.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,20 +22,20 @@ namespace Demo.Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
-        DataRetriver dataRetriver;
+        DataService dataRetriver;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            dataRetriver = new DataRetriver();
+            dataRetriver = new DataService();
             
 
         }
 
         private void Search(object sender, RoutedEventArgs e)
         {
-            var v = dataRetriver.GetFilteredPerson(searchTerm.Text);
+            //var v = dataRetriver.GetFilteredPerson(searchTerm.Text);
             
 
             // sett datakilde.

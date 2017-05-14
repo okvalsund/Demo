@@ -16,10 +16,18 @@ namespace Demo.API.Controllers
     public class PersonsController : Controller
     {
         private readonly IAsyncDataRepository<Person> _personRepository;
+        private readonly IAsyncDataRepository<User> _userRepository;
+        private readonly IAsyncDataRepository<Email> _emailRepository;
+        private readonly IAsyncDataRepository<Address> _addressRepository;
+
         private readonly IChangeLog _log;
-        public PersonsController(IAsyncDataRepository<Person> personRepository, IChangeLog log)
+        public PersonsController(IAsyncDataRepository<Person> personRepository, IAsyncDataRepository<User> userRepository,
+            IAsyncDataRepository<Email> emailRepository, IAsyncDataRepository<Address> addressRepository, IChangeLog log)
         {
             _personRepository = personRepository;
+            _userRepository = userRepository;
+            _emailRepository = emailRepository;
+            _addressRepository = addressRepository;
             _log = log;
         }
 
@@ -30,7 +38,7 @@ namespace Demo.API.Controllers
             return Ok(allPersons);
         }
 
-        [HttpGet("{id}", Name = "GetPersonAsync")]
+        [HttpGet("{id}", Name = nameof(GetPersonAsync))]
         public async Task<IActionResult> GetPersonAsync(int id)
         {
             var person = await _personRepository.GetAsync(id);
@@ -69,7 +77,14 @@ namespace Demo.API.Controllers
 
             _log.LogCreated(HttpContext.Request.Method, HttpContext.Request.Path, JsonConvert.SerializeObject(person).ToString());
 
-            return CreatedAtRoute(new { person.Id }, person);
+            //var response = Request.CreateResponse(HttpStatusCode.Created);
+
+            //// Generate a link to the new book and set the Location header in the response.
+            //string uri = Url.Link("GetBookById", new { id = book.BookId });
+            //response.Headers.Location = new Uri(uri);
+            //https://docs.microsoft.com/en-us/aspnet/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2
+
+            return CreatedAtRoute(nameof(GetPersonAsync), new { person.Id }, person);
         }
 
         [HttpPut("{id}", Name = "UpdatePersonAsync")]
@@ -110,6 +125,30 @@ namespace Demo.API.Controllers
 
             if (person == null)
                 return NotFound();
+
+            var user = await _userRepository.GetAsync(id);
+
+            if(user != null)
+            {
+                await _userRepository.DeleteAsync(user);
+                _log.LogDeleted(HttpContext.Request.Method, HttpContext.Request.Path, "user: " + JsonConvert.SerializeObject(user).ToString());
+            }
+
+            var emails = await _emailRepository.GetFilterByForeignKey(id, nameof(Email.PersonId));
+
+            foreach(var email in emails)
+            { 
+                await _emailRepository.DeleteAsync(email);
+                _log.LogDeleted(HttpContext.Request.Method, HttpContext.Request.Path, "email: "+ JsonConvert.SerializeObject(email).ToString());
+            }
+
+            var addresses = await _addressRepository.GetFilterByForeignKey(id, nameof(Address.PersonId));
+
+            foreach(var address in addresses)
+            {
+                await _addressRepository.DeleteAsync(address);
+                _log.LogDeleted(HttpContext.Request.Method, HttpContext.Request.Path, "address: " + JsonConvert.SerializeObject(address).ToString());
+            }
 
             if (!await _personRepository.DeleteAsync(person))
                 return StatusCode(StatusCodes.Status500InternalServerError, "Unable to delete person");

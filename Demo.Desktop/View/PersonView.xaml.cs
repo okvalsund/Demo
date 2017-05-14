@@ -11,15 +11,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Demo.Desktop.Model;
 
-namespace Demo.Desktop
+namespace Demo.Desktop.View
 {
     /// <summary>
-    /// Interaction logic for EditWindow.xaml
+    /// Interaction logic for PersonView.xaml
     /// </summary>
-    public partial class EditWindow : Window
+    public partial class PersonView : Window
     {
-        public EditWindow()
+        public PersonView()
         {
             InitializeComponent();
         }

@@ -11,18 +11,18 @@ using System.Text;
 namespace Demo.API.Controllers
 {
     [Produces("text/html")]
-    [Route("api/Report")]
-    public class ReportController : Controller
+    [Route("api/Reports")]
+    public class ReportsController : Controller
     {
         private readonly IAsyncDataRepository<Person> _personRepository;
         private readonly IAsyncDataRepository<User> _userRepository;
-        public ReportController(IAsyncDataRepository<Person> personRepository, IAsyncDataRepository<User> userRepository)
+        public ReportsController(IAsyncDataRepository<Person> personRepository, IAsyncDataRepository<User> userRepository)
         {
             _personRepository = personRepository;
             _userRepository = userRepository;
         }
 
-        [HttpGet("PersonReport")]
+        [HttpGet("PersonsReport")]
         public async Task<IActionResult> GetPersonReport()
         {
             var persons = await _personRepository.GetAllAsync();
@@ -33,7 +33,7 @@ namespace Demo.API.Controllers
             return Ok(generateHtml(persons.ToList(), "Persons"));
         }
 
-        [HttpGet("UserReport")]
+        [HttpGet("UsersReport")]
         public async Task<IActionResult> GetUserReport()
         {
             var users = await _personRepository.GetFilterByInheritedAsync(typeof(User));
